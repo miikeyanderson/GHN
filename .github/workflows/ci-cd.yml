@@ -213,12 +213,11 @@ jobs:
 
       - name: Notify Test Results
         if: always()
-        uses: ./.github/workflows/slack-notification.yml
+        uses: ./.github/actions/slack-notify
         with:
           stage: 'E2E Tests'
           status: ${{ job.status }}
-        secrets:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   performance-test:
     needs: [e2e-tests]
@@ -336,12 +335,11 @@ jobs:
       
       - name: Notify Deployment Status
         if: always()
-        uses: ./.github/workflows/slack-notification.yml
+        uses: ./.github/actions/slack-notify
         with:
-          stage: 'Deployment to ${{ github.event.inputs.environment || "staging" }}'
+          stage: ${{ format('Deployment to {0}', github.event.inputs.environment || 'staging') }}
           status: ${{ job.status }}
-        secrets:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   cleanup:
     needs: deploy

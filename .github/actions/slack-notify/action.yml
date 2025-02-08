@@ -1,0 +1,114 @@
+name: 'Enhanced Slack Notification'
+description: 'Send detailed Slack notifications with test results and deployment info'
+inputs:
+  stage:
+    description: 'Pipeline stage name'
+    required: true
+  status:
+    description: 'Status of the stage'
+    required: true
+  webhook-url:
+    description: 'Slack webhook URL'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Download Test Results
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+      continue-on-error: true
+      shell: bash
+
+    - name: Process Test Results
+      id: process-results
+      shell: bash
+      run: |
+        # Process Cypress results
+        if [ -d "artifacts/cypress-results" ]; then
+          echo "cypress_total=$(find artifacts/cypress-results -name '*.mp4' | wc -l)" >> $GITHUB_OUTPUT
+          echo "cypress_failed=$(find artifacts/cypress-results -name '*--failed.mp4' | wc -l)" >> $GITHUB_OUTPUT
+        fi
+        
+        # Process coverage results
+        if [ -f "artifacts/coverage/coverage-summary.json" ]; then
+          coverage=$(jq .total.lines.pct artifacts/coverage/coverage-summary.json)
+          echo "coverage=${coverage}" >> $GITHUB_OUTPUT
+        fi
+        
+        # Get commit info
+        echo "commit_msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+        echo "commit_author=$(git log -1 --pretty=%an)" >> $GITHUB_OUTPUT
+        echo "commit_sha=$(git log -1 --pretty=%h)" >> $GITHUB_OUTPUT
+
+    - name: Send Notification
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "${{ inputs.stage }} - ${{ inputs.status == 'success' && '✅' || '❌' }} ${{ inputs.status }}"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Repository:*\n${{ github.repository }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Branch:*\n${{ github.ref_name }}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Commit:*\n${{ steps.process-results.outputs.commit_msg }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Author:*\n${{ steps.process-results.outputs.commit_author }}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Test Results:*\n${{ steps.process-results.outputs.cypress_total || 0 }} tests run\n${{ steps.process-results.outputs.cypress_failed || 0 }} tests failed"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Coverage:*\n${{ steps.process-results.outputs.coverage || 'N/A' }}%"
+                }
+              },
+              {
+                "type": "context",
+                "elements": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "👉 <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                ]
+              }
+            ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ inputs.webhook-url }}

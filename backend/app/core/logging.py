@@ -31,23 +31,27 @@ def setup_sentry() -> None:
         logger.warning("SENTRY_DSN not found. Sentry integration disabled.")
         return
 
-    # Configure Sentry SDK
+    # Configure Sentry SDK with optimized settings
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
         environment=settings.sentry_environment,
         traces_sample_rate=settings.sentry_traces_sample_rate,
         integrations=[
-            FastApiIntegration(),  # Using default configuration
+            FastApiIntegration(transaction_style='url'),
             LoggingIntegration(
                 level=logging.INFO,
                 event_level=logging.ERROR
             ),
         ],
         before_send=before_send,
-        attach_stacktrace=True,
         send_default_pii=False,
-        max_breadcrumbs=50,
-        debug=True
+        max_breadcrumbs=30,
+        debug=False,
+        shutdown_timeout=5,
+        auto_enabling_integrations=False,
+        auto_session_tracking=True,
+        enable_tracing=True,
+        profiles_sample_rate=0.1
     )
     logger.info(f"Sentry initialized for environment: {settings.sentry_environment}")
 

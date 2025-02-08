@@ -17,23 +17,164 @@ on:
           - staging
           - production
 
+# Environment variables available to all jobs
 env:
   NODE_VERSION: '18'
   PYTHON_VERSION: '3.11'
   FRONTEND_DIR: 'frontend'
   BACKEND_DIR: 'backend'
   DOCKER_REGISTRY: 'ghcr.io'
+  AWS_REGION: 'us-west-2'
+  ECR_REPOSITORY: 'ghn-app'
 
 # Concurrency group to ensure only one deployment runs at a time per environment
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.environment || 'default' }}
   cancel-in-progress: true
 
 jobs:
   security-scan:
-    name: Security Scanning
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run GitGuardian scan
+        uses: GitGuardian/ggshield-action@master
+        env:
+          GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+          GITHUB_PUSH_BASE_SHA: ${{ github.event.pull_request && github.event.pull_request.base.sha || github.event.before }}
+          GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request && github.event.pull_request.base.sha || '' }}
+          GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'GHN'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd ${{ env.FRONTEND_DIR }} && npm ci
+          cd ../${{ env.BACKEND_DIR }} && npm ci
+
+      - name: Run ESLint
+        run: |
+          cd ${{ env.FRONTEND_DIR }} && npm run lint -- --max-warnings 0
+          cd ../${{ env.BACKEND_DIR }} && npm run lint -- --max-warnings 0
+
+      - name: Run Prettier Check
+        run: |
+          cd ${{ env.FRONTEND_DIR }} && npm run format:check
+          cd ../${{ env.BACKEND_DIR }} && npm run format:check
+
+      - name: Type Check
+        run: |
+          cd ${{ env.FRONTEND_DIR }} && npm run type-check
+          cd ../${{ env.BACKEND_DIR }} && npm run type-check
+  performance-test:
+    needs: [e2e-tests]
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |  
+            ${{ env.FRONTEND_DIR }}/package-lock.json
+            ${{ env.BACKEND_DIR }}/package-lock.json
+
+      - name: Install Dependencies
+        run: |
+          cd ${{ env.FRONTEND_DIR }} && npm ci
+          cd ../${{ env.BACKEND_DIR }} && npm ci
+
+      - name: Run Lighthouse CI
+        id: lighthouse
+        continue-on-error: true
+        run: |
+          cd ${{ env.FRONTEND_DIR }}
+          npx @lhci/cli@0.11.x autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Run k6 Load Tests
+        id: k6
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: ${{ env.BACKEND_DIR }}/tests/performance/load-test.js
+          flags: --out json=results.json
+        env:
+          K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
+
+      - name: Analyze Performance Results
+        id: analysis
+        if: always()
+        run: |
+          cd ${{ env.BACKEND_DIR }}/tests/performance
+          node ../scripts/analyze-performance.js results.json
+
+      - name: Upload Performance Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: |
+            ${{ env.FRONTEND_DIR }}/.lighthouseci
+            ${{ env.BACKEND_DIR }}/tests/performance/results.json
+
+      - name: Notify Performance Results
+        if: always()
+        uses: ./.github/actions/slack-notify
+        with:
+          stage: 'Performance Tests'
+          status: ${{ job.status }}
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          details: |
+            Lighthouse CI: ${{ steps.lighthouse.outcome }}
+            k6 Load Tests: ${{ steps.k6.outcome }}
+            Performance Analysis: ${{ steps.analysis.outcome }}
       - uses: actions/checkout@v3
       
       - name: Run Snyk Security Scan
@@ -235,26 +376,9 @@ jobs:
           stage: 'E2E Tests'
           status: ${{ job.status }}
           webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          environment: ${{ github.event.inputs.environment || 'staging' }}
 
-  performance-test:
-    needs: [e2e-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Run k6 Load Test
-        uses: grafana/k6-action@v0.2.0
-        with:
-          filename: performance/load-test.js
-          flags: --out json=results.json
-        env:
-          K6_CLOUD_TOKEN: ${{ secrets.K6_CLOUD_TOKEN }}
-      
-      - name: Store Performance Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: k6-results
-          path: results.json
+
 
   build-and-push:
     needs: [security-scan, e2e-tests]
@@ -309,15 +433,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GithubActionsSession
       
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name ghn-cluster --region us-west-2
+        run: aws eks update-kubeconfig --name ghn-cluster --region ${{ env.AWS_REGION }}
       
       - name: Deploy to Kubernetes
         run: |
@@ -363,12 +487,12 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GithubActionsSession
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -393,7 +517,7 @@ jobs:
             prod
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name ghn-cluster --region us-west-2
+        run: aws eks update-kubeconfig --name ghn-cluster --region ${{ env.AWS_REGION }}
 
       - name: Cleanup completed pods
         run: |

@@ -1,14 +1,14 @@
 # GHN Backend
 
-This is the backend service for the GHN (Global Health Network) MVP application. It provides the API endpoints and business logic for the application.
+This is the backend service for the Global HealthOps Nexus (GHN) MVP application. Built with FastAPI, it provides a modern, fast, and secure API with automatic OpenAPI documentation.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Python 3.8+
-- PostgreSQL
-- Python virtual environment (recommended)
+- Python 3.11+ (recommended)
+- Python virtual environment
+- SQLite (development) or PostgreSQL (production)
 
 ### Installation
 
@@ -27,35 +27,35 @@ pip install -r requirements.txt
 - Copy `.env.example` to `.env`
 - Update the values in `.env` with your configuration
 
-4. Initialize the database:
-```bash
-flask db upgrade
-```
-
 ### Running the Application
 
 Development mode:
 ```bash
-flask run
+python run.py
 ```
 
 Production mode:
 ```bash
-gunicorn app:app
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
+
+Once running, visit:
+- API Documentation: http://localhost:8000/docs
+- Alternative Documentation: http://localhost:8000/redoc
 
 ## 🏗️ Project Structure
 
 ```
 backend/
 ├── app/
-│   ├── models/      # Database models
-│   ├── routes/      # API endpoints
-│   ├── services/    # Business logic
-│   └── utils/       # Helper functions
-├── migrations/      # Database migrations
-├── tests/          # Test suite
-└── config.py       # Application configuration
+│   ├── core/        # Core functionality (config, security, database)
+│   ├── models/      # Database models and Pydantic schemas
+│   └── routes/      # API endpoints
+├── logs/           # Application logs
+├── migrations/     # Database migrations
+├── tests/         # Test suite
+├── main.py        # FastAPI application instance
+└── run.py         # Application runner
 ```
 
 ## 🔑 Authentication
@@ -68,19 +68,20 @@ Authorization: Bearer <token>
 
 ## 📚 API Documentation
 
+The API documentation is automatically generated and available through Swagger UI and ReDoc:
+
 ### Authentication Endpoints
 
-- `POST /api/auth/login`
-- `POST /api/auth/register`
-- `POST /api/auth/refresh`
+- `POST /api/v1/auth/login` - Authenticate user and get JWT token
+- `POST /api/v1/auth/register` - Register a new user
 
-### Health Endpoints
+### Health Check Endpoint
 
-- `GET /api/health/check`
-- `POST /api/health/records`
-- `GET /api/health/records/:id`
+- `GET /api/v1/health/check` - Check API health status
 
-For detailed API documentation, see our [API Documentation](./API.md).
+For detailed API documentation with request/response examples, visit:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
 ## 🧪 Testing
 
@@ -91,7 +92,17 @@ pytest
 
 Run tests with coverage:
 ```bash
-pytest --cov=app tests/
+pytest --cov=app tests/ --cov-report=html
+```
+
+## 🔍 Error Tracking
+
+The application uses Sentry for error tracking and performance monitoring. To enable Sentry:
+
+1. Get a Sentry DSN from https://sentry.io
+2. Add your DSN to the `.env` file:
+```
+SENTRY_DSN=your-sentry-dsn
 ```
 
 ## 📦 Deployment

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # Sentry
     sentry_dsn: str | None = None
     sentry_environment: str = "development"
-    sentry_traces_sample_rate: float = 0.1
+    sentry_traces_sample_rate: float = 0.05  # Reduced to 5% for better performance
     
     # Logging
     log_level: str = "INFO"

@@ -47,7 +47,7 @@ const axiosInstance = axios.create({
 
 // Type for the extended error tracking hook
 interface ExtendedErrorTracking extends ReturnType<typeof useErrorTracking> {
-  addNetworkBreadcrumb: (method: string, url: string, status?: number, data?: any) => void
+  addNetworkBreadcrumb: (method: string, url: string, status?: number, data?: unknown) => void
 }
 
 let errorTracking: ExtendedErrorTracking | null = null

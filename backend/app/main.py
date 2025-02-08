@@ -4,8 +4,11 @@ from fastapi.responses import JSONResponse
 import time
 import sys
 import logging.handlers
-from app.config import get_settings, LOG_FILE
+from app.core.config import get_settings
+from app.core.constants import LOG_FILE
 from app.core.logging import setup_sentry, capture_error, logger
+from app.core.database import engine, Base
+from app.core.init_db import init_db
 
 # Initialize settings
 settings = get_settings()
@@ -35,7 +38,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.DEBUG)
 
 app = FastAPI(
-    title="Global HealthOps Nexus API",
+    title=settings.PROJECT_NAME,
     description="""Backend API for the Global HealthOps Nexus (GHN) MVP.
     
     ## Features
@@ -63,39 +66,41 @@ app = FastAPI(
     }
     ```
     """,
-    version="0.1.0",
+    version=settings.VERSION,
     openapi_tags=[
         {
-            "name": "Authentication",
+            "name": "auth",
             "description": "Operations for user authentication and registration"
         },
         {
-            "name": "Health",
+            "name": "health",
             "description": "API health check and monitoring endpoints"
+        },
+        {
+            "name": "patients",
+            "description": "Operations for managing patient records"
+        },
+        {
+            "name": "health_records",
+            "description": "Operations for managing patient health records and treatments"
         }
     ],
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url=f"{settings.API_PREFIX}/openapi.json"
 )
 
 # Configure CORS
-allowed_origins = [
-    "http://localhost:5173",  # Vite default
-    "http://localhost:5174",  # Alternative Vite port
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5174",
-]
-
+origins = ["http://localhost:5173"] if settings.ALLOWED_ORIGINS != "*" else ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-logger.info(f"Configured CORS with allowed origins: {allowed_origins}")
+logger.info(f"Configured CORS with allowed origins: {settings.ALLOWED_ORIGINS}")
 
 # Middleware for request logging
 @app.middleware("http")
@@ -142,11 +147,26 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 # Import routers
-from app.routes import auth, health
+from app.routes import auth, health, patient, health_record
+
+# Startup and shutdown events
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Initializing database...")
+    await init_db()
+    logger.info("Database initialized successfully!")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Closing database connections...")
+    await engine.dispose()
+    logger.info("Database connections closed.")
 
 # Include routers
-app.include_router(auth.router)
-app.include_router(health.router)
+app.include_router(auth.router, prefix=f"{settings.API_PREFIX}/auth", tags=["auth"])
+app.include_router(health.router, prefix=f"{settings.API_PREFIX}/health", tags=["health"])
+app.include_router(patient.router, prefix=f"{settings.API_PREFIX}/patients", tags=["patients"])
+app.include_router(health_record.router, prefix=f"{settings.API_PREFIX}", tags=["health_records"])
 
 # Test endpoint for error logging
 @app.get("/test-error", include_in_schema=False)

@@ -1,0 +1,39 @@
+name: Test Slack Notification
+
+on: workflow_dispatch  # This allows manual trigger
+
+jobs:
+  test-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Test Message
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "attachments": [
+                {
+                  "color": "good",
+                  "author_name": "GHN-MVP CI/CD",
+                  "title": "🎉 Test Notification",
+                  "text": "If you can see this message, your Slack webhook is working correctly!\n\n*Project*: GHN-MVP\n*Status*: Test Successful\n*Time*: ${{ github.event.repository.updated_at }}",
+                  "fields": [
+                    {
+                      "title": "Repository",
+                      "value": "${{ github.repository }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Environment",
+                      "value": "Test",
+                      "short": true
+                    }
+                  ],
+                  "footer": "GHN-MVP Deployment System",
+                  "footer_icon": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

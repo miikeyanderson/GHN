@@ -211,14 +211,13 @@ jobs:
           name: cypress-results
           path: cypress/videos/
 
-      - name: Notify Slack about Tests
+      - name: Notify Test Results
         if: always()
-        uses: 8398a7/action-slack@v3
+        uses: ./.github/workflows/slack-notification.yml
         with:
+          stage: 'E2E Tests'
           status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-          text: "E2E Test Results: ${{ job.status }}"
-        env:
+        secrets:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   performance-test:
@@ -335,13 +334,13 @@ jobs:
           timeout 300 bash -c 'until curl -s $HEALTH_CHECK_FRONTEND | grep -q "healthy"; do sleep 5; done'
           timeout 300 bash -c 'until curl -s $HEALTH_CHECK_BACKEND | grep -q "healthy"; do sleep 5; done'
       
-      - name: Notify Slack
+      - name: Notify Deployment Status
         if: always()
-        uses: 8398a7/action-slack@v3
+        uses: ./.github/workflows/slack-notification.yml
         with:
+          stage: 'Deployment to ${{ github.event.inputs.environment || "staging" }}'
           status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-        env:
+        secrets:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   cleanup:

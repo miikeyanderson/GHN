@@ -81,7 +81,13 @@ jobs:
           npm install -g @commitlint/cli @commitlint/config-conventional
       
       - name: Lint Commit Messages
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+          else
+            npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }} --verbose || true
+          fi
       
       - name: ESLint
         working-directory: ${{ env.FRONTEND_DIR }}

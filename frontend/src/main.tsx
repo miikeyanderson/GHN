@@ -2,7 +2,6 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
-import type { FallbackRender } from '@sentry/react'
 import App from './App.tsx'
 import { StoreProvider } from './providers/StoreProvider'
 import './index.css'
@@ -21,7 +20,11 @@ const getSystemInfo = () => {
 
   // Add memory info if available
   if ('memory' in performance) {
-    const memory = (performance as any).memory;
+    interface MemoryInfo {
+      totalJSHeapSize: number;
+      usedJSHeapSize: number;
+    }
+    const memory = (performance as unknown as { memory: MemoryInfo }).memory;
     info.totalJSHeapSize = `${Math.round(memory.totalJSHeapSize / 1048576)}MB`;
     info.usedJSHeapSize = `${Math.round(memory.usedJSHeapSize / 1048576)}MB`;
   }
@@ -84,7 +87,7 @@ const initSentry = () => {
             ...event.tags,
             ...systemInfo,
             'error.type': error?.constructor?.name,
-            'error.handled': Boolean(hint) ? 'yes' : 'no',
+            'error.handled': hint ? 'yes' : 'no',
           };
 
           event.extra = {
@@ -95,7 +98,7 @@ const initSentry = () => {
             'route.current': window.location.pathname,
             'route.search': window.location.search,
             'route.hash': window.location.hash,
-            'performance.memory': (performance as any)?.memory ? JSON.stringify((performance as any).memory) : 'unavailable',
+            'performance.memory': 'memory' in performance ? JSON.stringify((performance as unknown as { memory: { totalJSHeapSize: number; usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory) : 'unavailable',
             'performance.navigation': performance?.navigation ? JSON.stringify(performance.navigation) : 'unavailable',
             'performance.timing': performance?.timing ? JSON.stringify(performance.timing) : 'unavailable',
           };
@@ -158,51 +161,17 @@ const initSentry = () => {
   }
 };
 
-// Separate error fallback component
-const ErrorFallback: FallbackRender = (errorData) => (
-  <div style={{
-    padding: '20px',
-    margin: '20px',
-    backgroundColor: '#fff3f3',
-    border: '1px solid #ffcdd2',
-    borderRadius: '4px',
-    textAlign: 'center'
-  }}>
-    <h2 style={{ color: '#d32f2f' }}>Something went wrong</h2>
-    <p style={{ color: '#666' }}>
-      {errorData.error instanceof Error ? errorData.error.message : 'An unexpected error occurred'}
-    </p>
-    <button
-      onClick={() => {
-        // Clear any error state
-        errorData.resetError();
-        // Reload the page if needed
-        window.location.reload();
-      }}
-      style={{
-        padding: '8px 16px',
-        backgroundColor: '#4caf50',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer'
-      }}
-    >
-      Try again
-    </button>
-  </div>
-);
-
-// Initialize Sentry
-initSentry();
-
 // Import error boundaries
+import { ErrorFallback } from './components/ErrorFallback';
 import GenericErrorBoundary from './components/ErrorBoundary/GenericErrorBoundary';
 import AsyncErrorBoundary from './components/ErrorBoundary/AsyncErrorBoundary';
 import RouteErrorBoundary from './components/ErrorBoundary/RouteErrorBoundary';
 
+// Initialize Sentry
+initSentry();
+
 // Create the error boundary wrapped app
-const EnhancedApp = () => (
+export const EnhancedApp = () => (
   <GenericErrorBoundary>
     <Sentry.ErrorBoundary
       fallback={ErrorFallback}

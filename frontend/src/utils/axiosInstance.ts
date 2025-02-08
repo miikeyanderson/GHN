@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import config from '../config'
 import useErrorTracking from '../hooks/useErrorTracking'
 
@@ -57,7 +57,7 @@ export const initializeAxiosInstance = (trackingHook: ExtendedErrorTracking) => 
 
   // Request Interceptor
   axiosInstance.interceptors.request.use(
-    (config: AxiosRequestConfig) => {
+    (config: InternalAxiosRequestConfig) => {
       const requestId = generateRequestId()
       if (config.headers) {
         config.headers['X-Request-ID'] = requestId

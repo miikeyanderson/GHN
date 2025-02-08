@@ -67,12 +67,12 @@ const useErrorTracking = () => {
       performance: {
         navigation: performance.getEntriesByType('navigation')[0],
         resources: performance.getEntriesByType('resource')
-          .filter(r => r.initiatorType === 'fetch' || r.initiatorType === 'xmlhttprequest')
+          .filter(r => (r as PerformanceResourceTiming).initiatorType === 'fetch' || (r as PerformanceResourceTiming).initiatorType === 'xmlhttprequest')
           .map(r => ({
             name: r.name,
             duration: r.duration,
             startTime: r.startTime,
-            initiatorType: r.initiatorType
+            initiatorType: (r as PerformanceResourceTiming).initiatorType
           }))
       }
     }

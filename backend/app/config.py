@@ -8,19 +8,23 @@ class Settings(BaseSettings):
     api_env: str = "development"
     api_host: str = "0.0.0.0"
     api_port: int = 8000
+    api_version: str = "0.1.0"
     
     # Sentry
     sentry_dsn: str | None = None
     sentry_environment: str = "development"
+    sentry_traces_sample_rate: float = 0.1
     
     # Logging
     log_level: str = "INFO"
-    log_format: str = "{time} | {level} | {message}"
+    log_format: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "env_prefix": ""
+    }
 
 @lru_cache()
 def get_settings() -> Settings:

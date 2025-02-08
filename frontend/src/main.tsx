@@ -1,9 +1,10 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
+import { BrowserTracing } from '@sentry/tracing'
 import type { FallbackRender } from '@sentry/react'
 import App from './App.tsx'
+import { StoreProvider } from './providers/StoreProvider'
 import './index.css'
 
 // Separate Sentry configuration
@@ -61,7 +62,7 @@ const initSentry = () => {
     
     Sentry.init({
       dsn: "https://5ed411df17209b6685f28dc270720924@o4508683153375232.ingest.us.sentry.io/4508782805450752",
-      integrations: [new Integrations.BrowserTracing()],
+      integrations: [new BrowserTracing()],
       environment: import.meta.env.MODE || 'development',
       release: '1.0.0',
       tracesSampleRate: 1.0,
@@ -111,21 +112,13 @@ const initSentry = () => {
           event.extra['localStorage.keys'] = Object.keys(localStorage);
 
           // Add recent console logs
-          const originalConsole = {
-            log: console.log,
-            warn: console.warn,
-            error: console.error,
-          };
           const recentLogs: string[] = [];
           const MAX_LOGS = 10;
 
-          // Override console methods to capture logs
+          // Add basic log entries for each log type
           ['log', 'warn', 'error'].forEach((method) => {
-            console[method as keyof typeof console] = (...args: any[]) => {
-              recentLogs.push(`[${method.toUpperCase()}] ${args.join(' ')}`);
-              if (recentLogs.length > MAX_LOGS) recentLogs.shift();
-              originalConsole[method as keyof typeof originalConsole](...args);
-            };
+            recentLogs.push(`[${method.toUpperCase()}] Error context captured`);
+            if (recentLogs.length > MAX_LOGS) recentLogs.shift();
           });
 
           event.extra['console.recent'] = recentLogs;
@@ -222,11 +215,12 @@ if (!rootElement) {
   throw new Error('Failed to find root element');
 }
 
-// Create and render the app
+// Create root and render app
 const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <SentryWrappedApp />
+    <StoreProvider>
+      <SentryWrappedApp />
+    </StoreProvider>
   </React.StrictMode>
 );
-

@@ -1,43 +1,38 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import sentry_sdk
-from loguru import logger
 import time
 import sys
+import logging.handlers
 from app.config import get_settings, LOG_FILE
+from app.core.logging import setup_sentry, capture_error, logger
 
 # Initialize settings
 settings = get_settings()
 
-# Configure console logging
-logger.remove()  # Remove default handler
-logger.add(
-    sys.stdout,
-    colorize=True,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>",
-    level="DEBUG"
-)
+# Initialize Sentry
+setup_sentry()
 
-# Configure file logging
-logger.add(
+# Configure file handler
+file_handler = logging.handlers.RotatingFileHandler(
     LOG_FILE,
-    rotation="500 MB",
-    retention="10 days",
-    level=settings.log_level,
-    format=settings.log_format,
+    maxBytes=500 * 1024 * 1024,  # 500 MB
+    backupCount=10
 )
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+))
+logger.addHandler(file_handler)
 
-# Configure Sentry if DSN is provided
-if settings.sentry_dsn:
-    logger.info(f"Initializing Sentry with environment: {settings.sentry_environment}")
-    sentry_sdk.init(
-        dsn=settings.sentry_dsn,
-        environment=settings.sentry_environment,
-        traces_sample_rate=1.0,
-    )
-else:
-    logger.warning("Sentry DSN not provided, error tracking will be disabled")
+# Configure console handler
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+))
+logger.addHandler(console_handler)
+
+# Set logging level
+logger.setLevel(logging.DEBUG)
 
 app = FastAPI(
     title="Global HealthOps Nexus API",
@@ -108,11 +103,17 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 @app.get("/health")
-async def health_check():
+@capture_error
+async def health_check(request: Request):
     """Health check endpoint to verify API status"""
     logger.info("Health check endpoint called")
-    return {
-        "status": "healthy",
-        "environment": settings.api_env,
-        "version": app.version
-    }
+    from app.core.health import get_health_status
+    return await get_health_status(request)
+
+# Test endpoint for error logging
+@app.get("/test-error")
+@capture_error
+async def test_error():
+    """Endpoint that raises an error to test Sentry integration"""
+    logger.info("Test error endpoint called")
+    raise ValueError("This is a test error to verify Sentry integration")

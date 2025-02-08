@@ -363,11 +363,59 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Cleanup old images
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup old container images
         uses: snok/container-retention-policy@v1
         with:
-          image-names: ghn-frontend, ghn-backend
+          image-names: |
+            ghn-frontend
+            ghn-backend
           cut-off: 2 weeks ago UTC
           account-type: personal
           token: ${{ secrets.GITHUB_TOKEN }}
           keep-at-least: 5
+          skip-tags: |
+            latest
+            stable
+            prod
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name ghn-cluster --region us-west-2
+
+      - name: Cleanup completed pods
+        run: |
+          # Remove completed pods older than 24 hours
+          kubectl get pods --all-namespaces -o json | jq '.items[] | select(.status.phase == "Succeeded") | select(.status.startTime < (now - 86400))' | kubectl delete -f -
+
+      - name: Cleanup failed pods
+        run: |
+          # Remove failed pods older than 24 hours
+          kubectl get pods --all-namespaces -o json | jq '.items[] | select(.status.phase == "Failed") | select(.status.startTime < (now - 86400))' | kubectl delete -f -
+
+      - name: Cleanup old ConfigMaps
+        run: |
+          # Keep only the last 10 ConfigMaps per namespace
+          for ns in $(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'); do
+            kubectl get configmaps -n $ns --sort-by=.metadata.creationTimestamp -o name | head -n -10 | xargs -r kubectl delete -n $ns
+          done
+
+      - name: Notify Cleanup Status
+        if: always()
+        uses: ./.github/actions/slack-notify
+        with:
+          stage: 'Resource Cleanup'
+          status: ${{ job.status }}
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}

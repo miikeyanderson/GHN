@@ -36,8 +36,47 @@ logger.setLevel(logging.DEBUG)
 
 app = FastAPI(
     title="Global HealthOps Nexus API",
-    description="Backend API for the Global HealthOps Nexus (GHN) MVP",
-    version="0.1.0"
+    description="""Backend API for the Global HealthOps Nexus (GHN) MVP.
+    
+    ## Features
+    
+    * 🔐 **Authentication**: JWT-based authentication system
+    * 👥 **User Management**: User registration and profile management
+    * 🏥 **Health Records**: Secure health record management
+    * 📊 **Analytics**: Health data analytics and reporting
+    
+    ## Authentication
+    
+    All authenticated endpoints require a valid JWT token in the Authorization header:
+    ```
+    Authorization: Bearer <token>
+    ```
+    
+    ## Error Handling
+    
+    The API uses standard HTTP status codes and returns consistent error responses:
+    ```json
+    {
+        "detail": "Error message",
+        "status_code": 400,
+        "timestamp": "2025-02-08T10:45:00"
+    }
+    ```
+    """,
+    version="0.1.0",
+    openapi_tags=[
+        {
+            "name": "Authentication",
+            "description": "Operations for user authentication and registration"
+        },
+        {
+            "name": "Health",
+            "description": "API health check and monitoring endpoints"
+        }
+    ],
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
 # Configure CORS
@@ -102,16 +141,15 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal server error"}
     )
 
-@app.get("/health")
-@capture_error
-async def health_check(request: Request):
-    """Health check endpoint to verify API status"""
-    logger.info("Health check endpoint called")
-    from app.core.health import get_health_status
-    return await get_health_status(request)
+# Import routers
+from app.routes import auth, health
+
+# Include routers
+app.include_router(auth.router)
+app.include_router(health.router)
 
 # Test endpoint for error logging
-@app.get("/test-error")
+@app.get("/test-error", include_in_schema=False)
 @capture_error
 async def test_error():
     """Endpoint that raises an error to test Sentry integration"""

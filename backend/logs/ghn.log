@@ -1,0 +1,684 @@
+2025-02-08 04:27:07,971 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:27:25,671 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:27:44,721 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:28:03,752 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:29:28,242 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:29:40,482 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:30:04,674 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:30:09,975 - app.core.logging - INFO - Incoming GET /test-error
+2025-02-08 04:30:09,975 - app.core.logging - INFO - Test error endpoint called
+2025-02-08 04:30:09,976 - app.core.logging - ERROR - Error in test_error: This is a test error to verify Sentry integration
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 80, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 121, in test_error
+    raise ValueError("This is a test error to verify Sentry integration")
+ValueError: This is a test error to verify Sentry integration
+2025-02-08 04:30:09,976 - app.core.logging - ERROR - Error processing GET /test-error: cannot pickle 'FrameLocalsProxy' object
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 91, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 76, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 84, in call_next
+    raise app_exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 256, in _sentry_exceptionmiddleware_call
+    await old_call(self, scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/fastapi.py", line 136, in _sentry_app
+    return await old_app(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 96, in wrapper
+    sentry_sdk.capture_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/api.py", line 109, in capture_exception
+    return Hub.current.capture_exception(error, scope=scope, **scope_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/hub.py", line 398, in capture_exception
+    event, hint = event_from_exception(exc_info, client_options=client.options)
+                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 1076, in event_from_exception
+    "values": exceptions_from_error_tuple(
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_info, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 951, in exceptions_from_error_tuple
+    single_exception_from_error_tuple(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_type, exc_value, tb, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 771, in single_exception_from_error_tuple
+    serialize_frame(
+    ~~~~~~~~~~~~~~~^
+        tb.tb_frame,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        max_value_length=max_value_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 660, in serialize_frame
+    rv["vars"] = copy(frame.f_locals)
+                 ~~~~^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copy.py", line 88, in copy
+    rv = reductor(4)
+TypeError: cannot pickle 'FrameLocalsProxy' object
+2025-02-08 04:30:09,984 - app.core.logging - ERROR - Error processing request: /test-error
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 91, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 76, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 84, in call_next
+    raise app_exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 256, in _sentry_exceptionmiddleware_call
+    await old_call(self, scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/fastapi.py", line 136, in _sentry_app
+    return await old_app(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 96, in wrapper
+    sentry_sdk.capture_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/api.py", line 109, in capture_exception
+    return Hub.current.capture_exception(error, scope=scope, **scope_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/hub.py", line 398, in capture_exception
+    event, hint = event_from_exception(exc_info, client_options=client.options)
+                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 1076, in event_from_exception
+    "values": exceptions_from_error_tuple(
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_info, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 951, in exceptions_from_error_tuple
+    single_exception_from_error_tuple(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_type, exc_value, tb, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 771, in single_exception_from_error_tuple
+    serialize_frame(
+    ~~~~~~~~~~~~~~~^
+        tb.tb_frame,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        max_value_length=max_value_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 660, in serialize_frame
+    rv["vars"] = copy(frame.f_locals)
+                 ~~~~^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copy.py", line 88, in copy
+    rv = reductor(4)
+TypeError: cannot pickle 'FrameLocalsProxy' object
+2025-02-08 04:30:26,009 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:30:30,623 - app.core.logging - INFO - Incoming GET /test-error
+2025-02-08 04:30:30,624 - app.core.logging - INFO - Test error endpoint called
+2025-02-08 04:30:30,624 - app.core.logging - ERROR - Error in test_error: This is a test error to verify Sentry integration
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 91, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 121, in test_error
+    raise ValueError("This is a test error to verify Sentry integration")
+ValueError: This is a test error to verify Sentry integration
+2025-02-08 04:30:30,625 - app.core.logging - ERROR - Error processing GET /test-error: cannot pickle 'FrameLocalsProxy' object
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 91, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 76, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 84, in call_next
+    raise app_exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 256, in _sentry_exceptionmiddleware_call
+    await old_call(self, scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/fastapi.py", line 136, in _sentry_app
+    return await old_app(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 107, in wrapper
+    sentry_sdk.capture_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/api.py", line 109, in capture_exception
+    return Hub.current.capture_exception(error, scope=scope, **scope_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/hub.py", line 398, in capture_exception
+    event, hint = event_from_exception(exc_info, client_options=client.options)
+                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 1076, in event_from_exception
+    "values": exceptions_from_error_tuple(
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_info, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 951, in exceptions_from_error_tuple
+    single_exception_from_error_tuple(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_type, exc_value, tb, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 771, in single_exception_from_error_tuple
+    serialize_frame(
+    ~~~~~~~~~~~~~~~^
+        tb.tb_frame,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        max_value_length=max_value_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 660, in serialize_frame
+    rv["vars"] = copy(frame.f_locals)
+                 ~~~~^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copy.py", line 88, in copy
+    rv = reductor(4)
+TypeError: cannot pickle 'FrameLocalsProxy' object
+2025-02-08 04:30:30,628 - app.core.logging - ERROR - Error processing request: /test-error
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 91, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 76, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 84, in call_next
+    raise app_exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 256, in _sentry_exceptionmiddleware_call
+    await old_call(self, scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/fastapi.py", line 136, in _sentry_app
+    return await old_app(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 107, in wrapper
+    sentry_sdk.capture_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/api.py", line 109, in capture_exception
+    return Hub.current.capture_exception(error, scope=scope, **scope_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/hub.py", line 398, in capture_exception
+    event, hint = event_from_exception(exc_info, client_options=client.options)
+                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 1076, in event_from_exception
+    "values": exceptions_from_error_tuple(
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_info, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 951, in exceptions_from_error_tuple
+    single_exception_from_error_tuple(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_type, exc_value, tb, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 771, in single_exception_from_error_tuple
+    serialize_frame(
+    ~~~~~~~~~~~~~~~^
+        tb.tb_frame,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        max_value_length=max_value_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 660, in serialize_frame
+    rv["vars"] = copy(frame.f_locals)
+                 ~~~~^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copy.py", line 88, in copy
+    rv = reductor(4)
+TypeError: cannot pickle 'FrameLocalsProxy' object
+2025-02-08 04:30:44,507 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:30:49,745 - app.core.logging - INFO - Incoming GET /test-error
+2025-02-08 04:30:49,745 - app.core.logging - INFO - Test error endpoint called
+2025-02-08 04:30:49,746 - app.core.logging - ERROR - Error in test_error: This is a test error to verify Sentry integration
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 95, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 121, in test_error
+    raise ValueError("This is a test error to verify Sentry integration")
+ValueError: This is a test error to verify Sentry integration
+2025-02-08 04:30:49,749 - app.core.logging - ERROR - Error processing GET /test-error: cannot pickle 'FrameLocalsProxy' object
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 91, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 76, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 84, in call_next
+    raise app_exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 256, in _sentry_exceptionmiddleware_call
+    await old_call(self, scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/fastapi.py", line 136, in _sentry_app
+    return await old_app(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 111, in wrapper
+    sentry_sdk.capture_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/api.py", line 109, in capture_exception
+    return Hub.current.capture_exception(error, scope=scope, **scope_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/hub.py", line 398, in capture_exception
+    event, hint = event_from_exception(exc_info, client_options=client.options)
+                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 1076, in event_from_exception
+    "values": exceptions_from_error_tuple(
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_info, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 951, in exceptions_from_error_tuple
+    single_exception_from_error_tuple(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_type, exc_value, tb, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 771, in single_exception_from_error_tuple
+    serialize_frame(
+    ~~~~~~~~~~~~~~~^
+        tb.tb_frame,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        max_value_length=max_value_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 660, in serialize_frame
+    rv["vars"] = copy(frame.f_locals)
+                 ~~~~^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copy.py", line 88, in copy
+    rv = reductor(4)
+TypeError: cannot pickle 'FrameLocalsProxy' object
+2025-02-08 04:30:49,754 - app.core.logging - ERROR - Error processing request: /test-error
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 78, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 98, in receive
+    return self.receive_nowait()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/anyio/streams/memory.py", line 91, in receive_nowait
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 162, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 108, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/main.py", line 76, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 84, in call_next
+    raise app_exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/base.py", line 70, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 83, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 256, in _sentry_exceptionmiddleware_call
+    await old_call(self, scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
+    raise exc
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/starlette.py", line 157, in _create_span_call
+    return await old_call(app, scope, new_receive, new_send, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
+    raise e
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/starlette/routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/integrations/fastapi.py", line 136, in _sentry_app
+    return await old_app(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 274, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        dependant=dependant, values=values, is_coroutine=is_coroutine
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/fastapi/routing.py", line 191, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/app/core/logging.py", line 111, in wrapper
+    sentry_sdk.capture_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/api.py", line 109, in capture_exception
+    return Hub.current.capture_exception(error, scope=scope, **scope_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/hub.py", line 398, in capture_exception
+    event, hint = event_from_exception(exc_info, client_options=client.options)
+                  ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 1076, in event_from_exception
+    "values": exceptions_from_error_tuple(
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_info, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 951, in exceptions_from_error_tuple
+    single_exception_from_error_tuple(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        exc_type, exc_value, tb, client_options, mechanism
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 771, in single_exception_from_error_tuple
+    serialize_frame(
+    ~~~~~~~~~~~~~~~^
+        tb.tb_frame,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        max_value_length=max_value_length,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/mikeyanderson/CascadeProjects/ghn-mvp/backend/venv/lib/python3.13/site-packages/sentry_sdk/utils.py", line 660, in serialize_frame
+    rv["vars"] = copy(frame.f_locals)
+                 ~~~~^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/copy.py", line 88, in copy
+    rv = reductor(4)
+TypeError: cannot pickle 'FrameLocalsProxy' object
+2025-02-08 04:32:50,408 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:32:54,594 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:33:00,308 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:33:15,314 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:33:33,845 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']
+2025-02-08 04:33:46,803 - app.core.logging - INFO - Incoming GET /health
+2025-02-08 04:33:46,803 - app.core.logging - INFO - Health check endpoint called
+2025-02-08 04:33:48,013 - app.core.logging - INFO - Completed GET /health - 200
+2025-02-08 04:39:45,474 - app.core.logging - INFO - Configured CORS with allowed origins: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174']

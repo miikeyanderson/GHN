@@ -196,17 +196,30 @@ const ErrorFallback: FallbackRender = (errorData) => (
 // Initialize Sentry
 initSentry();
 
+// Import error boundaries
+import GenericErrorBoundary from './components/ErrorBoundary/GenericErrorBoundary';
+import AsyncErrorBoundary from './components/ErrorBoundary/AsyncErrorBoundary';
+import RouteErrorBoundary from './components/ErrorBoundary/RouteErrorBoundary';
+
 // Create the error boundary wrapped app
-const SentryWrappedApp = () => (
-  <Sentry.ErrorBoundary
-    fallback={ErrorFallback}
-    onError={(error) => {
-      console.error('Caught by error boundary:', error);
-      Sentry.captureException(error);
-    }}
-  >
-    <App />
-  </Sentry.ErrorBoundary>
+const EnhancedApp = () => (
+  <GenericErrorBoundary>
+    <Sentry.ErrorBoundary
+      fallback={ErrorFallback}
+      onError={(error) => {
+        console.error('Caught by Sentry error boundary:', error);
+        Sentry.captureException(error);
+      }}
+    >
+      <StoreProvider>
+        <AsyncErrorBoundary>
+          <RouteErrorBoundary>
+            <App />
+          </RouteErrorBoundary>
+        </AsyncErrorBoundary>
+      </StoreProvider>
+    </Sentry.ErrorBoundary>
+  </GenericErrorBoundary>
 );
 
 // Get the root element
@@ -219,8 +232,6 @@ if (!rootElement) {
 const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <StoreProvider>
-      <SentryWrappedApp />
-    </StoreProvider>
+    <EnhancedApp />
   </React.StrictMode>
 );

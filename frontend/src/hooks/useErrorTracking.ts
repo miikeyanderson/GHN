@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react'
 
 interface ErrorContext {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface SystemInfo {
@@ -22,7 +22,11 @@ const getSystemInfo = (): SystemInfo => {
   
   // Add memory info if available
   if ('memory' in performance) {
-    const memory = (performance as any).memory
+    interface MemoryInfo {
+      usedJSHeapSize: number
+      jsHeapSizeLimit: number
+    }
+    const memory = (performance as unknown as { memory: MemoryInfo }).memory
     info.memory = `${Math.round(memory.usedJSHeapSize / 1024 / 1024)}MB / ${Math.round(memory.jsHeapSizeLimit / 1024 / 1024)}MB`
   }
   
@@ -114,7 +118,7 @@ const useErrorTracking = () => {
     const flowContext = {
       ...context,
       flowEnd: systemInfo.timestamp,
-      duration: context?.flowStart ? systemInfo.timestamp - context.flowStart : undefined,
+      duration: typeof context?.flowStart === 'number' ? systemInfo.timestamp - context.flowStart : undefined,
       systemInfo
     }
 

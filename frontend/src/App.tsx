@@ -18,7 +18,7 @@ function App() {
         Promise.reject(new Error('Async Error Example'))
         break
       
-      case 'custom':
+      case 'custom': {
         const error = new Error('Custom Error with Extra Context')
         Sentry.withScope((scope) => {
           scope.setExtra('customData', { 
@@ -29,7 +29,7 @@ function App() {
           Sentry.captureException(error)
         })
         throw error
-      
+      }
       default:
         throw new Error('Unknown error type')
     }

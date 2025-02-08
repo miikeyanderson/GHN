@@ -126,7 +126,7 @@ const ErrorTester = () => {
         )
 
         // Access undefined property to cause React error
-        const obj: any = undefined
+        const obj: Record<string, unknown> = undefined as unknown as Record<string, unknown>
         addBreadcrumb(
           'Attempting to access undefined property',
           'error-simulation',
@@ -134,7 +134,7 @@ const ErrorTester = () => {
           { step: 'invalid-access' }
         )
 
-        return obj.nonexistent.property
+        return (obj as any).nonexistent.property // Type assertion used for testing error case
       } catch (error) {
         captureError(error as Error, {
           errorType: 'component',
@@ -154,7 +154,7 @@ const ErrorTester = () => {
       timestamp: Date.now()
     })
     simulateErrors[errorType]()
-  }, [addUserInteraction])
+  }, [addUserInteraction, simulateErrors])
 
   return (
     <div className="error-tester" style={{ marginTop: '2rem' }}>
